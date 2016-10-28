@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace SokobanSolver
 {
-    class Solver
+    public class Solver
     {
+
+        public Solver()
+        {
+
+        }
+
+        public bool Solve()
+        {
+
+            return true;
+        }
+
     }
 }

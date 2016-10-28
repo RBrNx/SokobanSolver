@@ -6,58 +6,147 @@ using System.Threading.Tasks;
 
 namespace SokobanSolver
 {
-    public class Level
+    public struct Level
     {
         public List<List<char>> grid;
         public int px, py;
         public int width, height;
 
-        public Level()
+        public Level(Level lvl)
         {
-            grid = new List<List<char>>();
-            px = 0; py = 0;
-            width = 0; height = 0;
+            grid = lvl.grid.Select(x => x.ToList()).ToList();
+            px = lvl.px; py = lvl.py;
+            width = lvl.width; height = lvl.height;
         }
 
-        public Level(Level level)
+        public static void levelFromString(string lvl)
         {
-            grid = level.grid.Select(x => x.ToList()).ToList(); //Stack Overflow said so (Clones instead of referencing)
-            px = level.px; py = level.py;
-            width = level.width; height = level.height;
-        }
-
-        public override string ToString()
-        {
-            string ret = "";
-            for (int y = 0; y < grid.Count; y++)
+            foreach (string row in lvl.Split('\n'))
             {
-                string row = "";
-                for (int x = 0; x > grid[y].Count; x++)
+                List<char> gridRow = new List<char>();
+                foreach (char c in row)
                 {
-                    row += grid[y][x];
+                    gridRow.Add(c);
                 }
-                ret += row + "\n";
+                Global.level.grid.Add(gridRow);
             }
-            return ret;
+
+            Global.level.height = Global.level.grid.Count;
+            Global.level.width = Global.level.grid[0].Count;
+
+            for (int i = 0; i < Global.level.height; i++)
+            {
+                for (int j = 0; j < Global.level.width; j++)
+                {
+                    if (Global.level.grid[i][j] == Global.PLAYER || Global.level.grid[i][j] == Global.PONGOAL)
+                    {
+                        Global.level.px = j; Global.level.py = i;
+                    }
+                }
+            }
+        }
+
+        public static void cleanLevel()
+        {
+            for (int i = 0; i < Global.level.height; i++)
+            {
+                for (int j = 0; j < Global.level.width; j++)
+                {
+                    Global.level.grid[i][j] = 'O';
+                }
+            }
+        }
+
+        public static void printLevel(Level level)
+        {
+            for(int y = 0; y < level.height; y++)
+            {
+                for(int x = 0; x < level.width; x++)
+                {
+                    Console.Write((y == level.py && x == level.px) ? putPlayer(level.grid[y][x]) : level.grid[y][x]);
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("\n");
+        }
+
+        public static int genPos(int x, int y) { return Global.LVLSIZE * x + y; }
+
+        public static int xPos(int pos) { return pos / Global.LVLSIZE; }
+
+        public static int yPos(int pos) { return pos % Global.LVLSIZE; }
+
+        public static bool hasBoxOn(char c)
+        {
+            return c == Global.BOX || c == Global.BOXONGOAL;
+        }
+
+        public static bool hasUnplacedBoxOn(char c)
+        {
+            return c == Global.BOX;
+        }
+
+        public static bool hasGoalOn(char c)
+        {
+            return c == Global.GOAL || c == Global.BOXONGOAL;
+        }
+
+        public static bool hasEmptyGoalOn(char c)
+        {
+            return c == Global.GOAL;
+        }
+
+        public static bool isBoxPlaceable(char c)
+        {
+            return c != Global.WALL || c != Global.DEADFIELD;
+        }
+
+        public static bool isWalkable(char c)
+        {
+            return c != Global.WALL && !hasBoxOn(c);
+        }
+
+        public static bool isPushable(char c)
+        {
+            return isWalkable(c) && c != Global.DEADFIELD;
+        }
+
+        public static char putPlayer(char c)
+        {
+            return hasGoalOn(c) ? Global.PONGOAL : Global.PLAYER;
+        }
+
+        public static char putBox(char c)
+        {
+            switch (c)
+            {
+                case ' ': return Global.BOX;
+                case '.': return Global.BOXONGOAL;
+                default: return c;
+            }
+        }
+
+        public static char removeBox(char c)
+        {
+            switch (c)
+            {
+                case '*': return Global.GOAL;
+                case '$': return Global.FLOOR;
+                default: return c;
+            }
+        }
+
+        public static bool isField(char c)
+        {
+            string search = " #$.*@+";
+            return search.Contains(c);
         }
     }
 
-    public class LevelFunctions
+    /*public static class LevelFunctions
     {
-        char WALL = '#';
-        char FLOOR = ' ';
-        char GOAL = '.';
-        char BOX = '$';
-        char BOXONGOAL = '*';
-        char PLAYER = '@';
-        char PONGOAL = '+';
-        char DEADFIELD = 'x';
-        char PATTERN_EDGE = '-';
-
-        public Level levelFromString(string lvl)
-        {
-            Level level = new Level();
-            
+        public static void levelFromString(string lvl)
+        {            
             foreach(string row in lvl.Split('\n'))
             {
                 List<char> gridRow = new List<char>();
@@ -65,91 +154,106 @@ namespace SokobanSolver
                 {
                     gridRow.Add(c);
                 }
-                level.grid.Add(gridRow);
+                Global.level.grid.Add(gridRow);
             }
 
-            level.height = level.grid.Count;
-            level.width = level.grid[0].Count;
+            Global.level.height = Global.level.grid.Count;
+            Global.level.width = Global.level.grid[0].Count;
 
-            for(int i = 0; i < level.height; i++)
+            for(int i = 0; i < Global.level.height; i++)
             {
-                for(int j = 0; j < level.width; j++)
+                for(int j = 0; j < Global.level.width; j++)
                 {
-                    if(level.grid[i][j] == PLAYER || level.grid[i][j] == PONGOAL)
+                    if(Global.level.grid[i][j] == Global.PLAYER || Global.level.grid[i][j] == Global.PONGOAL)
                     {
-                        level.px = j; level.py = i;
+                        Global.level.px = j; Global.level.py = i;
                     }
                 }
             }
-
-            return level;
         }
 
-        public bool hasBoxOn(char c)
+        public static void cleanLevel()
         {
-            return c == BOX || c == BOXONGOAL;
+            for(int i = 0; i < Global.level.height; i++)
+            {
+                for(int j = 0; j < Global.level.width; j++)
+                {
+                    Global.level.grid[i][j] = 'O';
+                }
+            }
         }
 
-        public bool hasUnplacedBoxOn(char c)
+        public static int genPos(int x, int y){ return Global.LVLSIZE * x + y; }
+
+        public static int xPos(int pos) { return pos / Global.LVLSIZE; }
+
+        public static int yPos(int pos) { return pos % Global.LVLSIZE; }
+
+        public static bool hasBoxOn(char c)
         {
-            return c == BOX;
+            return c == Global.BOX || c == Global.BOXONGOAL;
         }
 
-        public bool hasGoalOn(char c)
+        public static bool hasUnplacedBoxOn(char c)
         {
-            return c == GOAL || c == BOXONGOAL;
+            return c == Global.BOX;
         }
 
-        public bool hasEmptyGoalOn(char c)
+        public static bool hasGoalOn(char c)
         {
-            return c == GOAL;
+            return c == Global.GOAL || c == Global.BOXONGOAL;
         }
 
-        public bool isBoxPlaceable(char c)
+        public static bool hasEmptyGoalOn(char c)
         {
-            return c != WALL || c != DEADFIELD;
+            return c == Global.GOAL;
         }
 
-        public bool isWalkable(char c)
+        public static bool isBoxPlaceable(char c)
         {
-            return c != WALL && !hasBoxOn(c);
+            return c != Global.WALL || c != Global.DEADFIELD;
         }
 
-        public bool isPushable(char c)
+        public static bool isWalkable(char c)
         {
-            return isWalkable(c) && c != DEADFIELD;
+            return c != Global.WALL && !hasBoxOn(c);
         }
 
-        public char putPlayer(char c)
+        public static bool isPushable(char c)
         {
-            return hasGoalOn(c) ? PONGOAL : PLAYER;
+            return isWalkable(c) && c != Global.DEADFIELD;
         }
 
-        public char putBox(char c)
+        public static char putPlayer(char c)
+        {
+            return hasGoalOn(c) ? Global.PONGOAL : Global.PLAYER;
+        }
+
+        public static char putBox(char c)
         {
             switch (c)
             {
-                case ' ': return BOX;
-                case '.': return BOXONGOAL;
+                case ' ': return Global.BOX;
+                case '.': return Global.BOXONGOAL;
                 default: return c; 
             }
         }
 
-        public char removeBox(char c)
+        public static char removeBox(char c)
         {
             switch (c)
             {
-                case '*': return GOAL;
-                case '$': return FLOOR;
+                case '*': return Global.GOAL;
+                case '$': return Global.FLOOR;
                 default: return c;
             }
         }
 
-        public bool isField(char c)
+        public static bool isField(char c)
         {
             string search = " #$.*@+";
             return search.Contains(c);
         }
-    }
+    }*/
     
 }

@@ -1,1 +1,0 @@
-c:\users\watsonco.reynolds\documents\visual studio 2015\Projects\SokobanSolver\SokobanSolver\bin\Debug\SokobanSolver.exe.config

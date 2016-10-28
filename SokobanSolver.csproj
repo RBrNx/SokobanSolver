@@ -43,10 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Global.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="LevelInfo.cs" />
+    <Compile Include="Move.cs" />
+    <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Solution.cs" />
     <Compile Include="Solver.cs" />
   </ItemGroup>
   <ItemGroup>
