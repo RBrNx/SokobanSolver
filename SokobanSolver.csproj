@@ -43,13 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeadlockTable.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="Hashtable.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="LevelInfo.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queue.cs" />
     <Compile Include="Solution.cs" />
     <Compile Include="Solver.cs" />
   </ItemGroup>

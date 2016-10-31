@@ -14,6 +14,9 @@ namespace SokobanSolver
         public static Solution levelSol = new Solution();
         public static Random random = new Random();
 
+        public static Position[,] staticDeadlocks = new Position[MAXFIELDS, MAXSTATICDEADLOCKS];
+        public static int[] staticDeadlocksCount = new int[MAXSTATICDEADLOCKS];
+
         public static char WALL = '#';
         public static char FLOOR = ' ';
         public static char GOAL = '.';
@@ -25,6 +28,10 @@ namespace SokobanSolver
         public static char PATTERN_EDGE = '-';
 
         public static int LVLSIZE = 64;
+        public static int HASHSIZE = 16769023;
+        public static int HASHMAX = HASHSIZE * 9 / 10;
+        public static int MOVECHUNK = 65536;
+        public static int QUEUECHUNK = 65536;
         public static int MAXFIELDS = 500;
         public static int POSITIONSIZE = 4;
         public static int MAXDISTANCE = 10000;

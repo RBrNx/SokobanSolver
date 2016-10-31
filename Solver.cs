@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 
 namespace SokobanSolver
 {
-    public class Solver
+    public static class Solver
     {
 
-        public Solver()
+        public static bool Solve(string level)
         {
+            Level.levelFromString(level);
+            int count = 1;
 
-        }
+            Console.WriteLine("Starting Solve");
+            Global.solvable = true;
+            Global.levelSol.length = 0;
+            LevelInfo.preprocessLevel();
+            DeadlockTable.calculateStaticDeadlocks();
+            Level.printLevel(Global.level);
 
-        public bool Solve()
-        {
-
+            
             return true;
         }
 

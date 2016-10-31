@@ -17,16 +17,22 @@ namespace SokobanSolver
             s = 0;
         }
 
+        public Position(Position pos)
+        {
+            b = (uint[])pos.b.Clone();
+            s = pos.s;
+        }
+
         public static void setPosition(ref Position pos)
         {
             int j = 0, i = 0;
             uint tmp = pos.b[0];
             for(int f = 0; f < Global.levelInfo.numFields; f++)
             {
-                int x = LevelFunctions.xPos(Global.levelInfo.fieldPos[f]);
-                int y = LevelFunctions.xPos(Global.levelInfo.fieldPos[f]);
+                int x = Level.xPos(Global.levelInfo.fieldPos[f]);
+                int y = Level.xPos(Global.levelInfo.fieldPos[f]);
 
-                Global.level.grid[y][x] = tmp % 2 == 0 ? LevelFunctions.putBox(Global.level.grid[y][x]) : LevelFunctions.removeBox(Global.level.grid[y][x]);
+                Global.level.grid[y][x] = tmp % 2 == 0 ? Level.putBox(Global.level.grid[y][x]) : Level.removeBox(Global.level.grid[y][x]);
                 tmp /= 2;
 
                 if(i++ >= 31)
@@ -36,13 +42,13 @@ namespace SokobanSolver
                     i = 0;
                 }
             }
-            Global.level.px = LevelFunctions.xPos(pos.s);
-            Global.level.py = LevelFunctions.yPos(pos.s);
+            Global.level.px = Level.xPos(pos.s);
+            Global.level.py = Level.yPos(pos.s);
         }
 
         public static void getPosition(ref Position pos)
         {
-            pos.s = LevelFunctions.genPos(Global.level.px, Global.level.py);
+            pos.s = Level.genPos(Global.level.px, Global.level.py);
             for(int i = 0; i < Global.POSITIONSIZE; i++)
             {
                 pos.b[i] = 0;
@@ -54,7 +60,7 @@ namespace SokobanSolver
                 for(int x = 0; x < Global.level.width; x++)
                 {
                     if (Global.level.grid[y][x] == Global.WALL || Global.level.grid[y][x] == Global.DEADFIELD) continue;
-                    uint con = Convert.ToUInt32(LevelFunctions.hasBoxOn(Global.level.grid[y][x]));
+                    uint con = Convert.ToUInt32(Level.hasBoxOn(Global.level.grid[y][x]));
                     pos.b[j] = pos.b[j] + (con << j);
 
                     if(j++ >= 31)
@@ -102,7 +108,7 @@ namespace SokobanSolver
             swapBoxOfPosition(ref result, from);
             swapBoxOfPosition(ref result, to);
 
-            result.s = LevelFunctions.genPos(xsok, ysok);
+            result.s = Level.genPos(xsok, ysok);
         }
 
         public static void cleanPosition(ref Position pos)

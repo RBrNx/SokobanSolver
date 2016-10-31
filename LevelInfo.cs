@@ -35,11 +35,7 @@ namespace SokobanSolver
             numFields = 0;
          }
 
-    }
-
-    public static class LevelInfoFunctions
-    {
-        public static void preprocessLevel(ref Level level)
+        public static void preprocessLevel()
         {
             addOutsideWalls();
             removeDeadends();
@@ -168,9 +164,9 @@ namespace SokobanSolver
         {
             int boxes = 0; int goals = 0;
 
-            for(int y = 0; y < Global.level.height; y++)
+            for (int y = 0; y < Global.level.height; y++)
             {
-                for(int x = 0; x < Global.level.width; x++)
+                for (int x = 0; x < Global.level.width; x++)
                 {
                     if (Level.hasBoxOn(Global.level.grid[y][x])) boxes++;
                     if (Level.hasGoalOn(Global.level.grid[y][x])) goals++;
@@ -188,7 +184,7 @@ namespace SokobanSolver
             {
                 for (int x = 0; x < Global.level.width; x++)
                 {
-                    if(Global.level.grid[y][x] != Global.WALL)
+                    if (Global.level.grid[y][x] != Global.WALL)
                     {
                         Global.tempInfo.fieldNum[y, x] = num;
                         Global.tempInfo.fieldPos[num++] = Level.genPos(x, y);
@@ -197,7 +193,7 @@ namespace SokobanSolver
             }
 
             Global.tempInfo.numFields = num;
-            if(num >= Global.MAXFIELDS)
+            if (num >= Global.MAXFIELDS)
             {
                 Console.WriteLine("Too Many Fields!");
                 Global.solvable = false;
@@ -206,9 +202,9 @@ namespace SokobanSolver
 
         public static void calculateMagicNumbers()
         {
-            for(int y = 0; y < Global.level.height; y++)
+            for (int y = 0; y < Global.level.height; y++)
             {
-                for(int x = 0; x < Global.level.width; x++)
+                for (int x = 0; x < Global.level.width; x++)
                 {
                     Global.tempInfo.magic[y, x] = (uint)Global.random.Next();
                 }
@@ -217,32 +213,32 @@ namespace SokobanSolver
 
         public static void calculateDistances()
         {
-            for(int source = 0; source < Global.tempInfo.numFields; source++)
+            for (int source = 0; source < Global.tempInfo.numFields; source++)
             {
                 int a = Level.yPos(Global.tempInfo.fieldPos[source]);
                 int b = Level.xPos(Global.tempInfo.fieldPos[source]);
                 int first = 0, last = 1;
                 Global.searchQueue[0] = Level.genPos(b, a);
 
-                for(int i = 0; i < Global.tempInfo.numFields; i++)
+                for (int i = 0; i < Global.tempInfo.numFields; i++)
                 {
                     Global.tempInfo.pushDists[source, i] = int.MaxValue;
                 }
                 Global.tempInfo.pushDists[source, source] = 0;
 
-                while(first < last)
+                while (first < last)
                 {
                     int x = Level.xPos(Global.searchQueue[first]);
                     int y = Level.yPos(Global.searchQueue[first++]);
                     int dist = Global.tempInfo.pushDists[source, Global.tempInfo.fieldNum[y, x]];
 
-                    for(int i = 0; i < 4; i++)
+                    for (int i = 0; i < 4; i++)
                     {
                         int xsok = x + Global.movesX[i]; int ysok = y + Global.movesY[i];
                         int xto = x + Global.movesX[i + 2]; int yto = y + Global.movesY[i + 2];
                         int target = Global.tempInfo.fieldNum[yto, xto];
 
-                        if(Global.level.grid[ysok][xsok] != Global.WALL && Global.level.grid[yto][xto] != Global.WALL && Global.tempInfo.pushDists[source, target] == int.MaxValue)
+                        if (Global.level.grid[ysok][xsok] != Global.WALL && Global.level.grid[yto][xto] != Global.WALL && Global.tempInfo.pushDists[source, target] == int.MaxValue)
                         {
                             Global.tempInfo.pushDists[source, target] = dist + 1;
                             Global.searchQueue[last++] = Level.genPos(xto, yto);
@@ -254,23 +250,23 @@ namespace SokobanSolver
 
         public static void setDeadFieldsAndGoalDistances()
         {
-            for(int source = 0; source < Global.tempInfo.numFields; source++)
+            for (int source = 0; source < Global.tempInfo.numFields; source++)
             {
                 Global.tempInfo.goalDists[source] = int.MaxValue;
-                for(int target = 0; target < Global.tempInfo.numFields; target++)
+                for (int target = 0; target < Global.tempInfo.numFields; target++)
                 {
                     int x = Level.xPos(Global.tempInfo.fieldPos[target]);
                     int y = Level.yPos(Global.tempInfo.fieldPos[target]);
                     if (Level.hasGoalOn(Global.level.grid[y][x]))
                     {
-                        if(Global.tempInfo.pushDists[source, target] < Global.tempInfo.goalDists[source])
+                        if (Global.tempInfo.pushDists[source, target] < Global.tempInfo.goalDists[source])
                         {
                             Global.tempInfo.goalDists[source] = Global.tempInfo.pushDists[source, target];
                         }
                     }
                 }
 
-                if(Global.tempInfo.goalDists[source] == int.MaxValue)
+                if (Global.tempInfo.goalDists[source] == int.MaxValue)
                 {
                     int xx = Level.xPos(Global.tempInfo.fieldPos[source]);
                     int yy = Level.yPos(Global.tempInfo.fieldPos[source]);
@@ -281,12 +277,12 @@ namespace SokobanSolver
 
         public static void findArticulations()
         {
-            for(int i = 0; i < Global.MAXFIELDS; i++)
+            for (int i = 0; i < Global.MAXFIELDS; i++)
             {
                 Global.art[i] = 0;
             }
 
-            for(int i = 0; i < Global.levelInfo.numFields; i++)
+            for (int i = 0; i < Global.levelInfo.numFields; i++)
             {
                 int x = Level.xPos(Global.levelInfo.fieldPos[i]);
                 int y = Level.yPos(Global.levelInfo.fieldPos[i]);
@@ -305,27 +301,27 @@ namespace SokobanSolver
             Global.reachable = new int[Global.LVLSIZE, Global.LVLSIZE];
 
             int com = 1;
-            for(int y = 0; y < Global.level.height; y++)
+            for (int y = 0; y < Global.level.height; y++)
             {
-                for(int x = 0; x < Global.level.width; x++)
+                for (int x = 0; x < Global.level.width; x++)
                 {
-                    if(Global.level.grid[y][x] != Global.WALL && Global.reachable[y, x] == 0)
+                    if (Global.level.grid[y][x] != Global.WALL && Global.reachable[y, x] == 0)
                     {
                         Global.reachable[y, x] = com;
 
                         int first = 0; int last = 1;
                         Global.searchQueue[0] = Level.genPos(x, y);
-                        while(first < last)
+                        while (first < last)
                         {
                             int xx = Level.xPos(Global.searchQueue[first]);
                             int yy = Level.yPos(Global.searchQueue[first++]);
 
-                            for(int i = 0; i < 4; i++)
+                            for (int i = 0; i < 4; i++)
                             {
                                 int x2 = x + Global.movesX[i];
                                 int y2 = y + Global.movesY[i];
 
-                                if(Global.level.grid[y2][x2] != Global.WALL && Global.reachable[y2, x2] == 0)
+                                if (Global.level.grid[y2][x2] != Global.WALL && Global.reachable[y2, x2] == 0)
                                 {
                                     Global.reachable[y2, x2] = com;
                                     Global.searchQueue[last++] = Level.genPos(x2, y2);
@@ -448,12 +444,12 @@ namespace SokobanSolver
                 for (int y = 0; y < Global.level.height;)
                 {
                     y1 = y;
-                    while(Level.isBoxPlaceable(Global.level.grid[y][x]) && Global.levelInfo.fieldNum[y, x] == 1)
+                    while (Level.isBoxPlaceable(Global.level.grid[y][x]) && Global.levelInfo.fieldNum[y, x] == 1)
                     {
                         y++;
                     }
                     y2 = y - 1;
-                    if(y2 < y1)
+                    if (y2 < y1)
                     {
                         y++;
                         continue;
@@ -463,9 +459,9 @@ namespace SokobanSolver
 
                     //Top End
                     topart = 0;
-                    if(Level.isBoxPlaceable(Global.level.grid[y1 - 1][x]))
+                    if (Level.isBoxPlaceable(Global.level.grid[y1 - 1][x]))
                     {
-                        if(Convert.ToBoolean(Global.art[Global.levelInfo.fieldNum[y1 - 1, x]]) && Convert.ToBoolean(Global.art[fn]))
+                        if (Convert.ToBoolean(Global.art[Global.levelInfo.fieldNum[y1 - 1, x]]) && Convert.ToBoolean(Global.art[fn]))
                         {
                             topend = Level.isBoxPlaceable(Global.level.grid[y1 - 2][x]) ? Global.levelInfo.fieldNum[y1 - 2, x] : -1;
                             topart = 1;
@@ -482,9 +478,9 @@ namespace SokobanSolver
                     }
 
                     //Right End
-                    if(Level.isBoxPlaceable(Global.level.grid[y2 + 1][x]))
+                    if (Level.isBoxPlaceable(Global.level.grid[y2 + 1][x]))
                     {
-                        if(Convert.ToBoolean(Global.art[Global.levelInfo.fieldNum[y2 + 1, x]]) && Convert.ToBoolean(Global.art[fn]))
+                        if (Convert.ToBoolean(Global.art[Global.levelInfo.fieldNum[y2 + 1, x]]) && Convert.ToBoolean(Global.art[fn]))
                         {
                             botend = Level.isBoxPlaceable(Global.level.grid[y2 + 2][x]) ? Global.levelInfo.fieldNum[y2 + 2, x] : -1;
                             distance++;
@@ -499,13 +495,13 @@ namespace SokobanSolver
                         botend = -1;
                     }
 
-                    if(distance == 1)
+                    if (distance == 1)
                     {
                         Global.levelInfo.tunnel[fn] = 0;
                         continue;
                     }
 
-                    for(int yc = y1; yc <= y2; yc++)
+                    for (int yc = y1; yc <= y2; yc++)
                     {
                         int f = Global.levelInfo.fieldNum[yc, x];
                         Global.levelInfo.tunnelGoals[f, 0] = topend;
@@ -522,11 +518,11 @@ namespace SokobanSolver
         public static void copyToInfo()
         {
             int num = 0;
-            for(int i = 0; i < Global.tempInfo.numFields; i++)
+            for (int i = 0; i < Global.tempInfo.numFields; i++)
             {
                 int x = Level.xPos(Global.tempInfo.fieldPos[i]);
                 int y = Level.yPos(Global.tempInfo.fieldPos[i]);
-                if(Global.level.grid[y][x] == Global.DEADFIELD)
+                if (Global.level.grid[y][x] == Global.DEADFIELD)
                 {
                     continue;
                 }
@@ -539,10 +535,10 @@ namespace SokobanSolver
             Global.levelInfo.numBoxes = Global.tempInfo.numBoxes;
             Global.levelInfo.magic = Global.tempInfo.magic;
 
-            for(int i = 0; i < Global.levelInfo.numFields; i++)
+            for (int i = 0; i < Global.levelInfo.numFields; i++)
             {
                 int x1 = Level.xPos(Global.levelInfo.fieldPos[i]); int y1 = Level.yPos(Global.levelInfo.fieldPos[i]);
-                for(int j = 0; j < Global.levelInfo.numFields; j++)
+                for (int j = 0; j < Global.levelInfo.numFields; j++)
                 {
                     int x2 = Level.xPos(Global.levelInfo.fieldPos[j]); int y2 = Level.yPos(Global.levelInfo.fieldPos[j]);
                     Global.levelInfo.pushDists[i, j] = Global.tempInfo.pushDists[Global.tempInfo.fieldNum[y1, x1], Global.tempInfo.fieldNum[y2, x2]];
@@ -550,5 +546,6 @@ namespace SokobanSolver
                 Global.levelInfo.goalDists[i] = Global.tempInfo.goalDists[Global.tempInfo.fieldNum[y1, x1]];
             }
         }
+
     }
 }
