@@ -13,6 +13,7 @@ namespace SokobanSolver
         public static LevelInfo tempInfo = new LevelInfo();
         public static Solution levelSol = new Solution();
         public static Random random = new Random();
+        public static Move root;
 
         public static Position[,] staticDeadlocks = new Position[MAXFIELDS, MAXSTATICDEADLOCKS];
         public static int[] staticDeadlocksCount = new int[MAXSTATICDEADLOCKS];
@@ -45,6 +46,7 @@ namespace SokobanSolver
         public static int[,] reachable = new int[LVLSIZE, LVLSIZE];
         public static int[] boxx = new int[MAXFIELDS];
         public static int[] boxy = new int[MAXFIELDS];
+        public static int boxCount;
 
         public static bool solvable = true;
 

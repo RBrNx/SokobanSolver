@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CRS.cs" />
     <Compile Include="DeadlockTable.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Hashtable.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Queue.cs" />
     <Compile Include="Solution.cs" />
     <Compile Include="Solver.cs" />
+    <Compile Include="SolvingRoutine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
