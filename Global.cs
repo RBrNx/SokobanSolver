@@ -12,6 +12,7 @@ namespace SokobanSolver
         public static LevelInfo levelInfo = new LevelInfo();
         public static LevelInfo tempInfo = new LevelInfo();
         public static Solution levelSol = new Solution();
+        public static Random random = new Random();
 
         public static char WALL = '#';
         public static char FLOOR = ' ';
@@ -39,6 +40,8 @@ namespace SokobanSolver
         public static int[] boxy = new int[MAXFIELDS];
 
         public static bool solvable = true;
+
+        public static int[] art = new int[MAXFIELDS];
 
         public static int[] movesX = new int[] { -1, 0, 1, 0, -1, 0, 1, 0 };
         public static int[] movesY = new int[] { 0, 1, 0, -1, 0, 1, 0, -1 };
