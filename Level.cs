@@ -21,6 +21,8 @@ namespace SokobanSolver
 
         public static void levelFromString(string lvl)
         {
+            Global.level.grid = new List<List<char>>();
+
             foreach (string row in lvl.Split('\n'))
             {
                 List<char> gridRow = new List<char>();
@@ -98,7 +100,7 @@ namespace SokobanSolver
 
         public static bool isBoxPlaceable(char c)
         {
-            return c != Global.WALL || c != Global.DEADFIELD;
+            return c != Global.WALL && c != Global.DEADFIELD;
         }
 
         public static bool isWalkable(char c)

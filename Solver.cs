@@ -12,8 +12,8 @@ namespace SokobanSolver
         public static bool Solve(string level)
         {
             Level.levelFromString(level);
-            int count = 1;
 
+            SolFunc.initArrays();
             Console.WriteLine("Starting Solve");
             Global.solvable = true;
             Global.levelSol.length = 0;
@@ -21,8 +21,17 @@ namespace SokobanSolver
             DeadlockTable.calculateStaticDeadlocks();
             Level.printLevel(Global.level);
 
-            
-            return true;
+            SolvingRoutine.trySolveLevel();
+            if (Global.solvable)
+            {
+                if(!SolFunc.checkSolution(Global.levelSol, Global.level))
+                {
+                    Global.solvable = false;
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
 
     }

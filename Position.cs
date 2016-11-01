@@ -61,7 +61,7 @@ namespace SokobanSolver
                 {
                     if (Global.level.grid[y][x] == Global.WALL || Global.level.grid[y][x] == Global.DEADFIELD) continue;
                     uint con = Convert.ToUInt32(Level.hasBoxOn(Global.level.grid[y][x]));
-                    pos.b[j] = pos.b[j] + (con << j);
+                    pos.b[k] = pos.b[k] + (con << j);
 
                     if(j++ >= 31)
                     {

@@ -8,29 +8,29 @@ namespace SokobanSolver
 {
     public static class DeadlockTable
     {
-        public static Position newDeadlock = new Position();
+        public static Position newDeadlock = new Position(Global.POSITIONSIZE);
 
         public static void calculateStaticDeadlocks()
         {
-            initalizeStaticDeadlocks();
+            initializeStaticDeadlocks();
             addStaticDeadlocks();
         }
 
-        public static int testStaticDeadlocks(Position pos, int fn)
+        public static bool testStaticDeadlocks(Position pos, int fn)
         {
             for(int i = 0; i < Global.staticDeadlocksCount[fn]; i++)
             {
                 if (Position.isSubposition(ref pos, ref Global.staticDeadlocks[fn, i]))
                 {
-                    return 1;
+                    return true;
                 }
             }
-            return 0;
+            return false;
         }
 
         public static void initializeStaticDeadlocks()
         {
-            for(int i = 0; i > Global.MAXFIELDS; i++)
+            for(int i = 0; i < Global.MAXSTATICDEADLOCKS; i++)
             {
                 Global.staticDeadlocksCount[i] = 0;
             }
@@ -41,7 +41,7 @@ namespace SokobanSolver
             if(Global.levelInfo.numBoxes >= 2)
             {
                 forbiddenPatternWithSymmetries(2, 2, "#$#$");
-                forbiddenPatternWithSymmetries(3, 3, "?###x$#$");
+                forbiddenPatternWithSymmetries(3, 3, "?###x$#$?");
                 forbiddenPatternWithSymmetries(2, 3, "?#$$#?");
             }
 

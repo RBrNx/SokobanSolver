@@ -9,29 +9,35 @@ namespace SokobanSolver
     public class Queue
     {
         public Queue next;
-        public IntPtr e;
+        public Move e;
 
-        public Queue createQueueNode(IntPtr element)
+        public Queue()
         {
-            Queue tmp = mallocNode();
+            next = null;
+            e = null;
+        }
+
+        public static Queue createQueueNode(Move element)
+        {
+            Queue tmp = Allocator.mallocNode();
             tmp.e = element;
             return tmp;
         }
 
-        public void appendQueueNode(ref Queue node, ref Queue after)
+        public static void appendQueueNode(Queue node, Queue after)
         {
             node.next = after.next;
             after.next = node;
         }
 
-        public Queue removeQueueNode(ref Queue before)
+        public static Queue removeQueueNode(Queue before)
         {
             Queue tmp = before.next;
             before.next = before.next.next;
             return tmp;
         }
 
-        public bool isQueueEmpty(Queue head)
+        public static bool isQueueEmpty(Queue head)
         {
             return head.next == null;
         }

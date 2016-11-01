@@ -17,25 +17,25 @@ namespace SokobanSolver
             data = new Move[Global.HASHSIZE];
         }
 
-        /*public static cleanHash()
+        public static void cleanHash()
         {
             for(int i = 0; i < Global.HASHSIZE; i++)
             {
-                if (data[i] != 0)
+                if (data[i] != null)
                 {
-
+                    Allocator.freeMove(data[i]);
                 }
             }
-        }*/
+        }
 
-        public static int addToHashtable(Move move)
+        public static bool addToHashtable(Move move)
         {
             uint pos = (uint)move.magic;
             while(data[pos % Global.HASHSIZE] != null)
             {
                 if(Move.compareMoves(move, data[pos % Global.HASHSIZE]))
                 {
-                    return 0;
+                    return false;
                 }
                 else
                 {
@@ -44,7 +44,7 @@ namespace SokobanSolver
             }
             data[pos % Global.HASHSIZE] = move;
             count++;
-            return 1;
+            return true;
         }
     }
 

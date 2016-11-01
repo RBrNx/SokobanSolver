@@ -41,7 +41,7 @@ namespace SokobanSolver
             calculateReachableSqaures();
             findCorrals();
             int prune = piCorralsCheck();
-            if (prune)
+            if (prune != 0)
             {
                 prunePositionByPiCorral(prune);
             }
@@ -136,7 +136,8 @@ namespace SokobanSolver
                         Global.searchQueueX[last] = x2;
                         Global.searchQueueY[last++] = y2;
 
-                        if(Level.hasUnplacedBoxOn(Global.level.grid[y2][x2]) || Level.hasEmptyGoalOn(Global.level.grid[y2][x2]){
+                        if(Level.hasUnplacedBoxOn(Global.level.grid[y2][x2]) || Level.hasEmptyGoalOn(Global.level.grid[y2][x2]))
+                        {
                             unfinishedGoal[value] = 1;
                         }
                     }

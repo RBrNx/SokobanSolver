@@ -14,23 +14,37 @@ namespace SokobanSolver
 
     public class SolFunc
     {
-        static Level oldpos;
-        static int sokx;
-        static int soky;
-        static int box;
-        static int tmpBox;
-        static int toBox;
-        static int toSokX;
-        static int toSokY;
+        public static Level oldpos;
+        public static int sokx;
+        public static int soky;
+        public static int box;
+        public static int tmpBox;
+        public static int toBox;
+        public static int toSokX;
+        public static int toSokY;
 
-        static int[] queueSok = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
-        static int[] queueBox = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
-        static int[] len = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
-        static int[] prev = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
-        static char[,] seq = new char[4 * Global.LVLSIZE * Global.LVLSIZE, 256];
-        static int[,,] mov = new int[Global.LVLSIZE , Global.LVLSIZE, 4];
+        public static int[] queueSok = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
+        public static int[] queueBox = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
+        public static int[] len = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
+        public static int[] prev = new int[4 * Global.LVLSIZE * Global.LVLSIZE];
+        //static char[][] seq = new char[4 * Global.LVLSIZE * Global.LVLSIZE][];
+        public static List<Char[]> seq = new List<char[]>(4 * Global.LVLSIZE * Global.LVLSIZE);
+        public static int[,,] mov = new int[Global.LVLSIZE , Global.LVLSIZE, 4];
 
-        public void createSolution(Solution sol, Move lastMove)
+        public static void initArrays()
+        {
+            for(int i = 0; i < 4 * Global.LVLSIZE * Global.LVLSIZE; i++)
+            {
+                seq.Add(newArray());
+            }
+        }
+
+        static char[] newArray()
+        {
+            return new char[256];
+        }
+
+        public static void createSolution(Solution sol, Move lastMove)
         {
             if(lastMove.parent != null)
             {
@@ -144,7 +158,7 @@ namespace SokobanSolver
                 if(Global.reachable[y + Global.movesY[i], x + Global.movesX[i]] >= 0 && Level.isPushable(oldpos.grid[yto][xto]))
                 {
                     len[last] = getTo(x + Global.movesX[i], y + Global.movesY[i], seq[last]);
-                    seq[last, len[last]++] = "RULD"[i];
+                    seq[last][len[last]++] = "RULD"[i];
                     queueSok[last] = Level.genPos(x, y);
                     queueBox[last] = Global.levelInfo.fieldNum[yto, xto];
                     prev[last++] = -1;
@@ -170,7 +184,7 @@ namespace SokobanSolver
                     if(Global.reachable[y + Global.movesY[i], Global.movesX[i]] >= 0 && mov[yto, xto, i] == 0 && Level.isPushable(oldpos.grid[yto][xto]))
                     {
                         len[last] = getTo(x + Global.movesX[i], y + Global.movesY[i], seq[last]);
-                        seq[last, len[last]++] = "RULD"[i];
+                        seq[last][len[last]++] = "RULD"[i];
                         queueSok[last] = Level.genPos(x, y);
                         queueBox[last] = Global.levelInfo.fieldNum[yto, xto];
                         prev[last++] = first;
@@ -265,12 +279,12 @@ namespace SokobanSolver
             }
         }
 
-        public static int getTo(int x, int y, ref char[] store)
+        public static int getTo(int x, int y, char[] store)
         {
             int l;
             if(Global.reachable[y, x] != 0)
             {
-                l = getTo(x + Global.movesX[Global.reachable[y, x]], y + Global.movesY[Global.reachable[y, x]], ref store);
+                l = getTo(x + Global.movesX[Global.reachable[y, x]], y + Global.movesY[Global.reachable[y, x]], store);
             }
             else
             {
@@ -283,13 +297,22 @@ namespace SokobanSolver
 
         public static void putPushToSol(int index, ref Solution sol)
         {
-            if (prev[index] != -1) putPushtoSol(prev[index], ref sol);
+            if (prev[index] != -1) putPushToSol(prev[index], ref sol);
 
             for(int i = 0; i < len[index]; i++)
             {
-                sol.move[sol.length + i] = seq[index, i];
+                sol.move[sol.length + i] = seq[index][i];
             }
             sol.length += len[index];
+        }
+
+        public static void writeSolution(Solution sol)
+        {
+            for(int i = 0; i < sol.length; i++)
+            {
+                Console.Write(sol.move[i]);
+            }
+            Console.WriteLine("");
         }
     }
 }

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Allocator.cs" />
     <Compile Include="CRS.cs" />
     <Compile Include="DeadlockTable.cs" />
     <Compile Include="Global.cs" />

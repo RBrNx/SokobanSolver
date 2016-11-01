@@ -8,16 +8,6 @@ namespace SokobanSolver
 {
     public static class Global
     {
-        public static Level level = new Level();
-        public static LevelInfo levelInfo = new LevelInfo();
-        public static LevelInfo tempInfo = new LevelInfo();
-        public static Solution levelSol = new Solution();
-        public static Random random = new Random();
-        public static Move root;
-
-        public static Position[,] staticDeadlocks = new Position[MAXFIELDS, MAXSTATICDEADLOCKS];
-        public static int[] staticDeadlocksCount = new int[MAXSTATICDEADLOCKS];
-
         public static char WALL = '#';
         public static char FLOOR = ' ';
         public static char GOAL = '.';
@@ -38,6 +28,17 @@ namespace SokobanSolver
         public static int MAXDISTANCE = 10000;
         public static int MAXSOLUTION = 10000;
         public static int MAXSTATICDEADLOCKS = 100;
+        public static int HIBYTES = (1 << 16);
+
+        public static Level level = new Level();
+        public static LevelInfo levelInfo = new LevelInfo(LVLSIZE, MAXFIELDS);
+        public static LevelInfo tempInfo = new LevelInfo(LVLSIZE, MAXFIELDS);
+        public static Solution levelSol = new Solution();
+        public static Random random = new Random();
+        public static Move root = new Move();
+
+        public static Position[,] staticDeadlocks = new Position[MAXFIELDS, MAXSTATICDEADLOCKS];
+        public static int[] staticDeadlocksCount = new int[MAXSTATICDEADLOCKS];
 
         public static int[] searchQueue = new int[LVLSIZE * LVLSIZE];
         public static int[] searchQueueX = new int[MAXFIELDS];
@@ -54,5 +55,8 @@ namespace SokobanSolver
 
         public static int[] movesX = new int[] { -1, 0, 1, 0, -1, 0, 1, 0 };
         public static int[] movesY = new int[] { 0, 1, 0, -1, 0, 1, 0, -1 };
+
+        public static Queue[] moveQueue = new Queue[MAXDISTANCE];
+        public static int currentDistance;
     }
 }
