@@ -9,8 +9,9 @@ namespace SokobanSolver
     public static class Solver
     {
 
-        public static bool Solve(string level)
-        {
+        public static bool Solve(string level, ref string solution)
+        { 
+
             Level.levelFromString(level);
 
             SolFunc.initArrays();
@@ -19,7 +20,7 @@ namespace SokobanSolver
             Global.levelSol.length = 0;
             LevelInfo.preprocessLevel();
             DeadlockTable.calculateStaticDeadlocks();
-            Level.printLevel(Global.level);
+            //Level.printLevel(Global.level);
 
             SolvingRoutine.trySolveLevel();
             if (Global.solvable)
@@ -28,6 +29,10 @@ namespace SokobanSolver
                 {
                     Global.solvable = false;
                     return false;
+                }
+                for(int i = 0; i < Global.levelSol.length; i++)
+                {
+                    solution += Global.levelSol.move[i];
                 }
                 return true;
             }

@@ -35,7 +35,7 @@ namespace SokobanSolver
                     if (Level.hasBoxOn(Global.level.grid[y][x]))
                     {
                         Global.root.magic = Global.root.magic ^ (int)Global.levelInfo.magic[y, x];
-                        Global.root.heuristic += (uint)Global.levelInfo.fieldNum[y, x];
+                        Global.root.heuristic += (uint)Global.levelInfo.goalDists[Global.levelInfo.fieldNum[y, x]];
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace SokobanSolver
                     if(Hashtable.count > Global.HASHMAX)
                     {
                         Global.solvable = false;
-                        Console.WriteLine("Hash Too Full");
+                        //Console.WriteLine("Hash Too Full");
                         return;
                     }
 
@@ -76,17 +76,23 @@ namespace SokobanSolver
 
                     Position.setPosition(ref mov.pos);
                     posnum++;
-                    if (posnum % 50000 == 0)
+                    /*if (posnum % 50000 == 0)
                     {
                         Level.printLevel(Global.level);
-                    }
+                    }*/
 
                     CRS.calculatePosition();
 
+                    //echoAreas();
+                    //Level.printLevel(Global.level);
+                    //Console.WriteLine("Current Heuristic = " + Global.currentDistance);
+
+                    //Console.WriteLine("mov.heuristic = " + mov.heuristic + " HIBYTES = " + Global.HIBYTES);
+                    //Console.WriteLine("Heuristic %: " + mov.heuristic % Global.HIBYTES + " Heuristic /: " + mov.heuristic / Global.HIBYTES);
                     if(mov.heuristic % Global.HIBYTES == mov.heuristic / Global.HIBYTES)
                     {
-                        Level.printLevel(Global.level);
-                        Console.WriteLine("Level Solved with " + mov.heuristic / Global.HIBYTES + " pushes!");
+                        //Level.printLevel(Global.level);
+                        //Console.WriteLine("Level Solved with " + mov.heuristic / Global.HIBYTES + " pushes!");
 
                         SolFunc.createSolution(Global.levelSol, mov);
                         SolFunc.writeSolution(Global.levelSol);
@@ -115,6 +121,8 @@ namespace SokobanSolver
                         }
                         else
                         {
+
+                            //Console.WriteLine("Using Tunnel Macro...");
                             for(int i = 0; i < 2; i++)
                             {
                                 int type = Global.levelInfo.tunnel[from] = 1;
@@ -127,12 +135,14 @@ namespace SokobanSolver
                                     if(Global.reachable[ysok, xsok] == 1 && Level.isPushable(Global.level.grid[yto][xto]))
                                     {
                                         int pd = Global.levelInfo.tunnelDists[from, i];
+                                        //Console.WriteLine("Tunnel: (" + xsok + ", " + ysok + ") =" + pd + "=> (" + xto + ", " + yto + ")");
                                         addMove(x, y, from, xto, yto, to, pd);
                                     }
                                 }
                             }
                         }
                     }
+                    //Console.WriteLine("--------------------------------------------------------------\n");
                 }
             }
         }
@@ -145,12 +155,99 @@ namespace SokobanSolver
 
             if(!DeadlockTable.testStaticDeadlocks(newMove.pos, to) && Hashtable.addToHashtable(newMove))
             {
+                //echoMove(mov, newMove);
                 newMove.parent = mov;
                 newMove.heuristic = mov.heuristic + (uint)pd - (uint)Global.levelInfo.goalDists[from] + (uint)Global.levelInfo.goalDists[to] + (uint)(Global.HIBYTES * pd);
                 Queue.appendQueueNode(Queue.createQueueNode(newMove), Global.moveQueue[newMove.heuristic % Global.HIBYTES]);
                 newMove = Allocator.mallocMove();
             }
 
+        }
+
+        public static void echoMove(Move cur, Move next)
+        {
+            int pos = 0;
+            int pos2 = 0;
+
+            for (int y = 0; y < Global.level.height; y++)
+            {
+                for(int x = 0; x < Global.level.width; x++)
+                {
+                    if(Global.level.grid[y][x] == Global.WALL)
+                    {
+                        Console.Write('#');
+                    }
+                    else if(Global.level.grid[y][x] == Global.DEADFIELD)
+                    {
+                        Console.Write('x');
+                    }
+                    else
+                    {
+                        Console.Write(Convert.ToBoolean(((cur.pos.b[pos / 32] >> (pos++ % 32)) % 2)) ? Level.putBox(Global.level.grid[y][x]) : (cur.pos.s == Level.genPos(x, y) ? Level.putPlayer(Global.level.grid[y][x]) : Global.level.grid[y][x]));
+                    }
+                }
+                Console.Write(y == Global.level.height / 2 ? "    -->    " : "           ");
+
+                for(int x = 0; x < Global.level.width; x++)
+                {
+                    if(Global.level.grid[y][x] == Global.WALL)
+                    {
+                        Console.Write('#');
+                    }
+                    else if(Global.level.grid[y][x] == Global.DEADFIELD)
+                    {
+                        Console.Write('x');
+                    }
+                    else
+                    {
+                        Console.Write(Convert.ToBoolean(((next.pos.b[pos2 / 32] >> (pos2++ % 32)) % 2)) ? Level.putBox(Global.level.grid[y][x]) : (next.pos.s == Level.genPos(x, y) ? Level.putPlayer(Global.level.grid[y][x]) : Global.level.grid[y][x]));
+                    }
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("");
+        }
+
+        public static void echoReachable()
+        {
+            Console.WriteLine("Reachable Squares: ");
+            for(int y = 0; y < Global.level.height; y++)
+            {
+                for (int x = 0; x < Global.level.width; x++)
+                {
+                    if (Global.reachable[y, x] != -1)
+                    {
+                        Console.Write(Global.reachable[y, x]);
+                    }
+                    else
+                    {
+                        Console.Write("#");
+                    }
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("");
+        }
+
+        public static void echoAreas()
+        {
+            Console.WriteLine("Areas:");
+            for(int y = 0; y < Global.level.height; y++)
+            {
+                for(int x = 0; x < Global.level.width; x++)
+                {
+                    if(Global.level.grid[y][x] == Global.WALL)
+                    {
+                        Console.Write('#');
+                    }
+                    else
+                    {
+                        Console.Write(Global.reachable[y, x]);
+                    }
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("");
         }
     }
 }

@@ -10,6 +10,12 @@ namespace SokobanSolver
     {
         public int length;
         public char[] move;
+
+        public Solution(int size)
+        {
+            length = 0;
+            move = new char[size];
+        }
     }
 
     public class SolFunc
@@ -56,6 +62,8 @@ namespace SokobanSolver
                 oldpos = new Level(Global.level);
                 return;
             }
+
+            addMovesBetweenTwoPos(sol, lastMove.pos);
         }
 
         public static bool checkSolution(Solution sol, Level level)
@@ -91,8 +99,8 @@ namespace SokobanSolver
                     else
                     {
                         //Can't do move
-                        Console.WriteLine(i + ": Cant do a move '" + m + "'");
-                        Level.printLevel(oldpos);
+                        //Console.WriteLine(i + ": Cant do a move '" + m + "'");
+                        //Level.printLevel(oldpos);
                     }
                 }
                 else
@@ -116,8 +124,8 @@ namespace SokobanSolver
                     if(Level.hasUnplacedBoxOn(oldpos.grid[y][x]) || Level.hasEmptyGoalOn(oldpos.grid[y][x]))
                     {
                         //Level is not finished
-                        Console.WriteLine("Level is not finished!");
-                        Level.printLevel(oldpos);
+                        //Console.WriteLine("Level is not finished!");
+                        //Level.printLevel(oldpos);
                         return false;
                     }
                 }
@@ -130,6 +138,7 @@ namespace SokobanSolver
         {
             calculatePush(to);
             tmpBox = box;
+            //Console.WriteLine("BOX: " + box);
             int x = Level.xPos(Global.levelInfo.fieldPos[tmpBox]);
             int y = Level.yPos(Global.levelInfo.fieldPos[tmpBox]);
             oldpos.grid[y][x] = Level.removeBox(oldpos.grid[y][x]);
@@ -139,7 +148,7 @@ namespace SokobanSolver
 
             for(int yy = 0; yy < Global.level.height; yy++)
             {
-                for(int xx = 0; x < Global.level.width; xx++)
+                for(int xx = 0; xx < Global.level.width; xx++)
                 {
                     for(int i = 0; i < 4; i++)
                     {
@@ -181,7 +190,7 @@ namespace SokobanSolver
                 {
                     int xto = x + Global.movesX[i + 2];
                     int yto = y + Global.movesY[i + 2];
-                    if(Global.reachable[y + Global.movesY[i], Global.movesX[i]] >= 0 && mov[yto, xto, i] == 0 && Level.isPushable(oldpos.grid[yto][xto]))
+                    if(Global.reachable[y + Global.movesY[i], x + Global.movesX[i]] >= 0 && mov[yto, xto, i] == 0 && Level.isPushable(oldpos.grid[yto][xto]))
                     {
                         len[last] = getTo(x + Global.movesX[i], y + Global.movesY[i], seq[last]);
                         seq[last][len[last]++] = "RULD"[i];
@@ -197,13 +206,13 @@ namespace SokobanSolver
             if(last <= first)
             {
                 //Error While Creating Solution
+                //Console.WriteLine("Error While Creating Solution");
+                //Level.printLevel(oldpos);
+                //Console.WriteLine("=>  (" + toSokX + ", " + toSokY + ", " + Level.xPos(Global.levelInfo.fieldPos[toBox]) + ", " + Level.yPos(Global.levelInfo.fieldPos[toBox]) + ")");
             }
             else
             {
-                putPushToSol(first, ref sol);
-                Console.WriteLine("Error While Creating Solution");
-                Level.printLevel(oldpos);
-                Console.WriteLine("=>  (" + toSokX + ", " + toSokY + ", " + Level.xPos(Global.levelInfo.fieldPos[toBox]) + ", " + Level.yPos(Global.levelInfo.fieldPos[toBox]) + ")");
+                putPushToSol(first, sol);         
             }
 
             x = Level.xPos(Global.levelInfo.fieldPos[toBox]);
@@ -224,7 +233,7 @@ namespace SokobanSolver
 
                 if(Convert.ToUInt32(Level.hasBoxOn(oldpos.grid[y][x])) != tmp % 2)
                 {
-                    if (tmp % 2 == 0) toBox = f;
+                    if (Convert.ToBoolean(tmp % 2)) toBox = f;
                     else box = f;
                 }
                 tmp /= 2;
@@ -253,6 +262,7 @@ namespace SokobanSolver
                     Global.reachable[y, x] = Level.isWalkable(oldpos.grid[y][x]) ? -1 : -2;
                 }
             }
+            //printReachable();
             Global.reachable[Level.yPos(Global.levelInfo.fieldPos[box]), Level.xPos(Global.levelInfo.fieldPos[box])] = -2;
 
             int first = 0;
@@ -295,9 +305,9 @@ namespace SokobanSolver
             return l + 1;
         }
 
-        public static void putPushToSol(int index, ref Solution sol)
+        public static void putPushToSol(int index, Solution sol)
         {
-            if (prev[index] != -1) putPushToSol(prev[index], ref sol);
+            if (prev[index] != -1) putPushToSol(prev[index], sol);
 
             for(int i = 0; i < len[index]; i++)
             {
@@ -311,6 +321,19 @@ namespace SokobanSolver
             for(int i = 0; i < sol.length; i++)
             {
                 Console.Write(sol.move[i]);
+            }
+            Console.WriteLine("");
+        }
+
+        public static void printReachable()
+        {
+            for(int y = 0; y < Global.level.height; y++)
+            {
+                for(int x = 0; x < Global.level.width; x++)
+                {
+                    Console.Write(" " + Global.reachable[y, x] + " ");
+                }
+                Console.WriteLine("");
             }
             Console.WriteLine("");
         }

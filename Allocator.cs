@@ -30,7 +30,8 @@ namespace SokobanSolver
             }
             else
             {
-                allocNodes = new Queue[Global.QUEUECHUNK];
+                //allocNodes = new Queue[Global.QUEUECHUNK];
+                allocNodes = Enumerable.Range(0, Global.QUEUECHUNK).Select(i => new Queue()).ToArray();
                 lastNode = 1;
                 return allocNodes[0];
             }
@@ -44,7 +45,8 @@ namespace SokobanSolver
             }
             else
             {
-                allocMoves = new Move[Global.MOVECHUNK];
+                //allocMoves = new Move[Global.MOVECHUNK];
+                allocMoves = Enumerable.Range(0, Global.MOVECHUNK).Select(i => new Move()).ToArray();
                 lastMove = 1;
                 return allocMoves[0];
             }

@@ -15,7 +15,11 @@ namespace SokobanSolver
                             "#.#  @#\n"+
                             "#######";
 
-            bool solved = Solver.Solve(level);
+            string solution = "";
+
+            bool solved = Solver.Solve(level, ref solution);
+            if (solved) Console.WriteLine(solution);
+            Console.ReadLine();
         }
     }
 }

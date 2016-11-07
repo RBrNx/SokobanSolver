@@ -184,6 +184,7 @@ namespace SokobanSolver
 
         public static void prunePositionByPiCorral(int corralNum)
         {
+            //Console.WriteLine("Pruning by PiCorral " + corralNum);
             int last = 0;
             for(int i = 0; i < Global.boxCount; i++)
             {

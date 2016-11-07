@@ -14,6 +14,7 @@ namespace SokobanSolver
         {
             initializeStaticDeadlocks();
             addStaticDeadlocks();
+            //echoDeadPositions();
         }
 
         public static bool testStaticDeadlocks(Position pos, int fn)
@@ -22,6 +23,7 @@ namespace SokobanSolver
             {
                 if (Position.isSubposition(ref pos, ref Global.staticDeadlocks[fn, i]))
                 {
+                    //Console.WriteLine("STATIC DEADLOCK: fn = " + fn + ", index = " + i + ", position ignored\n");
                     return true;
                 }
             }
@@ -41,23 +43,32 @@ namespace SokobanSolver
             if(Global.levelInfo.numBoxes >= 2)
             {
                 forbiddenPatternWithSymmetries(2, 2, "#$#$");
+                //for(int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
                 forbiddenPatternWithSymmetries(3, 3, "?###x$#$?");
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
                 forbiddenPatternWithSymmetries(2, 3, "?#$$#?");
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
             }
 
             if (Global.levelInfo.numBoxes >= 3)
             {
                 forbiddenPatternWithSymmetries(2, 2, "#$$$");
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
                 forbiddenPatternWithSymmetries(3, 4, "####x$#x$#$?");
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
                 forbiddenPatternWithSymmetries(3, 3, "?$#$$?#??");
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
             }
 
             if (Global.levelInfo.numBoxes >= 4)
             {
                 char[] pattern = new char[] { '$', '$', '$', '$' };
                 forbiddenPattern(2, 2, pattern);
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
                 forbiddenPatternWithSymmetries(3, 4, "??#?$$$$?#??");
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
                 forbiddenPatternWithSymmetries(3, 3, "?$$#x$#$?");
+                //for (int i = 0; i < Global.staticDeadlocksCount.Length; i++) { Console.Write(" " + Global.staticDeadlocksCount[i]); } Console.WriteLine("");
             }
         }
 
@@ -138,8 +149,16 @@ namespace SokobanSolver
                             switch (pat)
                             {
                                 case '?': break;
-                                case '#': if (Global.level.grid[y + y2][x + x2] == Global.WALL) ok = 0; break;
-                                case 'x': if (Level.hasGoalOn(Global.level.grid[y + y2][x + x2])) ok = 2; break;
+                                case '#': if (Global.level.grid[y + y2][x + x2] != Global.WALL)
+                                    {
+                                        ok = 0;
+                                    }
+                                    break;
+                                case 'x': if (Level.hasGoalOn(Global.level.grid[y + y2][x + x2]))
+                                    {
+                                        ok = 2;
+                                    }
+                                    break;
                                 case '$': if(!Level.isBoxPlaceable(Global.level.grid[y + y2][x + x2]))
                                     {
                                         ok = 3;
@@ -178,7 +197,10 @@ namespace SokobanSolver
                                     int fn = Global.levelInfo.fieldNum[y + y2, x + x2];
                                     for(int i = 0; i < Global.staticDeadlocksCount[fn]; i++)
                                     {
-                                        if (Position.isSubposition(ref newDeadlock, ref Global.staticDeadlocks[fn, i])) ok = 0;
+                                        if (Position.isSubposition(ref newDeadlock, ref Global.staticDeadlocks[fn, i]))
+                                        {
+                                            ok = 0;
+                                        }
                                     }
                                 }
                             }
@@ -202,6 +224,49 @@ namespace SokobanSolver
                     }
                 }
             }
+        }
+
+        public static void echoDeadPositions()
+        {
+            Position original = new Position(Global.POSITIONSIZE);
+            Position.getPosition(ref original);
+            Console.WriteLine("Field Numbers: ");
+            for(int y = 0; y < Global.level.height; y++)
+            {
+                for(int x = 0; x < Global.level.width; x++)
+                {
+                    if(Global.level.grid[y][x] == Global.WALL)
+                    {
+                        Console.Write(" # ");
+                    }
+                    else if(Global.level.grid[y][x] == Global.DEADFIELD)
+                    {
+                        Console.Write(" x ");
+                    }
+                    else
+                    {
+                        Console.Write(" " + Global.levelInfo.fieldNum[y, x].ToString("D2"));
+                        //Console.Write(" 00");
+                    }
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("STATIC DEADLOCKS:\n\n");
+
+            for(int i = 0; i < Global.levelInfo.numFields; i++)
+            {
+                if(Global.staticDeadlocksCount[i] > 0)
+                {
+                    Console.Write("Forbidden Positions for Field " + i + ": \n");
+                }
+                for(int j = 0; j < Global.staticDeadlocksCount[i]; j++)
+                {
+                    Position.setPosition(ref Global.staticDeadlocks[i, j]);
+                    Level.printLevel(Global.level);
+                }
+            }
+            Console.WriteLine("------------------\n");
+            Position.setPosition(ref original);
         }
     }
 }

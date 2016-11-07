@@ -195,7 +195,7 @@ namespace SokobanSolver
             Global.tempInfo.numFields = num;
             if (num >= Global.MAXFIELDS)
             {
-                Console.WriteLine("Too Many Fields!");
+                //Console.WriteLine("Too Many Fields!");
                 Global.solvable = false;
             }
         }
@@ -291,9 +291,22 @@ namespace SokobanSolver
                 if (Level.hasGoalOn(ch)) continue;
 
                 Global.level.grid[y][x] = Global.WALL;
-                Global.art[i] = Convert.ToInt32((LevelComponents() > 1));
+                Global.art[i] = Convert.ToInt32(LevelComponents() > 1);
                 Global.level.grid[y][x] = ch;
             }
+
+            /*Console.WriteLine("Articulations:");
+            for (int y = 0; y < Global.level.height; y++)
+            {
+                for (int x = 0; x < Global.level.width; x++)
+                {
+                    if (!Level.isBoxPlaceable(Global.level.grid[y][x]) || Global.art[Global.levelInfo.fieldNum[y, x]] == 0)
+                        Console.Write(Global.level.grid[y][x]);
+                    else
+                        Console.Write('A');
+                }
+                Console.Write("\n");
+            }*/
         }
 
         public static int LevelComponents()
@@ -318,8 +331,8 @@ namespace SokobanSolver
 
                             for (int i = 0; i < 4; i++)
                             {
-                                int x2 = x + Global.movesX[i];
-                                int y2 = y + Global.movesY[i];
+                                int x2 = xx + Global.movesX[i];
+                                int y2 = yy + Global.movesY[i];
 
                                 if (Global.level.grid[y2][x2] != Global.WALL && Global.reachable[y2, x2] == 0)
                                 {
@@ -337,6 +350,8 @@ namespace SokobanSolver
 
         public static void calculateTunnels()
         {
+            //Console.WriteLine("Creating Tunnels: ");
+
             for (int i = 0; i < Global.MAXFIELDS; i++)
             {
                 Global.levelInfo.tunnel[i] = 0;
@@ -426,6 +441,8 @@ namespace SokobanSolver
                         continue;
                     }
 
+                    //Console.WriteLine("Adding horizontal tunnel: " + leftend + "<=(" + x1 + "-" + x2 + ", " + y + ")=> " + rightend + "(fn = " + fn + ")");
+
                     for (int xc = x1; xc <= x2; xc++)
                     {
                         int f = Global.levelInfo.fieldNum[y, xc];
@@ -444,7 +461,7 @@ namespace SokobanSolver
                 for (int y = 0; y < Global.level.height;)
                 {
                     y1 = y;
-                    while (Level.isBoxPlaceable(Global.level.grid[y][x]) && Global.levelInfo.fieldNum[y, x] == 1)
+                    while (Level.isBoxPlaceable(Global.level.grid[y][x]) && Global.levelInfo.tunnel[Global.levelInfo.fieldNum[y, x]] == 1)
                     {
                         y++;
                     }
@@ -501,6 +518,8 @@ namespace SokobanSolver
                         continue;
                     }
 
+                    //Console.WriteLine("Adding vertical tunnel: " + topend + "^ (" + x + ", " + y1 + "-" + y2 + ") v " + botend + "(fn = " + fn + ")");
+
                     for (int yc = y1; yc <= y2; yc++)
                     {
                         int f = Global.levelInfo.fieldNum[yc, x];
@@ -513,6 +532,23 @@ namespace SokobanSolver
                 }
 
             }
+
+            /*for(int y = 0; y < Global.level.height; y++)
+            {
+                for(int x = 0; x < Global.level.width; x++)
+                {
+                    if(Global.levelInfo.tunnel[Global.levelInfo.fieldNum[y, x]] == 0)
+                    {
+                        Console.Write(Global.level.grid[y][x]);
+                    }
+                    else
+                    {
+                        Console.Write(Global.levelInfo.tunnel[Global.levelInfo.fieldNum[y, x]] == 1 ? '|' : '-');
+                    }
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("");*/
         }
 
         public static void copyToInfo()

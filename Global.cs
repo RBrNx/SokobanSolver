@@ -33,7 +33,7 @@ namespace SokobanSolver
         public static Level level = new Level();
         public static LevelInfo levelInfo = new LevelInfo(LVLSIZE, MAXFIELDS);
         public static LevelInfo tempInfo = new LevelInfo(LVLSIZE, MAXFIELDS);
-        public static Solution levelSol = new Solution();
+        public static Solution levelSol = new Solution(MAXSOLUTION);
         public static Random random = new Random();
         public static Move root = new Move();
 
@@ -56,7 +56,8 @@ namespace SokobanSolver
         public static int[] movesX = new int[] { -1, 0, 1, 0, -1, 0, 1, 0 };
         public static int[] movesY = new int[] { 0, 1, 0, -1, 0, 1, 0, -1 };
 
-        public static Queue[] moveQueue = new Queue[MAXDISTANCE];
+        //public static Queue[] moveQueue = new Queue[MAXDISTANCE];
+        public static Queue[] moveQueue = Enumerable.Range(0, MAXDISTANCE).Select(i => new Queue()).ToArray();
         public static int currentDistance;
     }
 }

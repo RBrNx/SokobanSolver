@@ -1,0 +1,5 @@
+C:\Users\watsonco.REYNOLDS\Documents\Visual Studio 2015\Projects\SokobanSolver\SokobanSolver\bin\Release\SokobanSolver.exe.config
+C:\Users\watsonco.REYNOLDS\Documents\Visual Studio 2015\Projects\SokobanSolver\SokobanSolver\bin\Release\SokobanSolver.exe
+C:\Users\watsonco.REYNOLDS\Documents\Visual Studio 2015\Projects\SokobanSolver\SokobanSolver\bin\Release\SokobanSolver.pdb
+C:\Users\watsonco.REYNOLDS\Documents\Visual Studio 2015\Projects\SokobanSolver\SokobanSolver\obj\Release\SokobanSolver.exe
+C:\Users\watsonco.REYNOLDS\Documents\Visual Studio 2015\Projects\SokobanSolver\SokobanSolver\obj\Release\SokobanSolver.pdb

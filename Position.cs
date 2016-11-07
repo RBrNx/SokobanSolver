@@ -30,9 +30,9 @@ namespace SokobanSolver
             for(int f = 0; f < Global.levelInfo.numFields; f++)
             {
                 int x = Level.xPos(Global.levelInfo.fieldPos[f]);
-                int y = Level.xPos(Global.levelInfo.fieldPos[f]);
+                int y = Level.yPos(Global.levelInfo.fieldPos[f]);
 
-                Global.level.grid[y][x] = tmp % 2 == 0 ? Level.putBox(Global.level.grid[y][x]) : Level.removeBox(Global.level.grid[y][x]);
+                Global.level.grid[y][x] = Convert.ToBoolean(tmp % 2) ? Level.putBox(Global.level.grid[y][x]) : Level.removeBox(Global.level.grid[y][x]);
                 tmp /= 2;
 
                 if(i++ >= 31)
